@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ProfilesModule } from './profiles/profiles.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ProfilesModule } from './profiles/profiles.module';
     }),
     AuthModule,
     ProfilesModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
