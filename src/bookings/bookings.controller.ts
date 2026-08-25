@@ -1,4 +1,4 @@
-import { Controller, Post, Patch, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Patch, Get, Query, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
@@ -22,5 +22,11 @@ export class BookingsController {
     @Body() dto: UpdateBookingStatusDto,
   ) {
     return this.bookingsService.updateStatus(id, req.user.userId, dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  getMyBookings(@Request() req, @Query('role') role: 'customer' | 'artisan') {
+    return this.bookingsService.getBookingsForUser(req.user.userId, role);
   }
 }

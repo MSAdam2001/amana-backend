@@ -71,4 +71,24 @@ export class BookingsService {
 
     return booking.save();
   }
+
+  async getBookingsForUser(userId: string, role: 'customer' | 'artisan') {
+    if (role === 'customer') {
+      return this.bookingModel
+        .find({ customerId: new Types.ObjectId(userId) })
+        .sort({ createdAt: -1 });
+    }
+
+    const artisanProfile = await this.artisanProfileModel.findOne({
+      userId: new Types.ObjectId(userId),
+    });
+
+    if (!artisanProfile) {
+      return [];
+    }
+
+    return this.bookingModel
+      .find({ artisanProfileId: artisanProfile._id })
+      .sort({ createdAt: -1 });
+  }
 }
