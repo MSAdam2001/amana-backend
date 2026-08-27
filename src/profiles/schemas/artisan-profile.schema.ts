@@ -11,6 +11,9 @@ export class ArtisanProfile {
   @Prop({ required: true })
   tradeCategory: string;
 
+  @Prop({ default: '' })
+  bio: string;
+
   @Prop({ default: [] })
   skills: string[];
 
