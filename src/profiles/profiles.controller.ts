@@ -21,6 +21,12 @@ export class ProfilesController {
     return this.profilesService.createCustomerProfile(req.user.userId, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('artisan/me')
+  getMyArtisanProfile(@Request() req) {
+    return this.profilesService.getMyArtisanProfile(req.user.userId);
+  }
+
   @Get('artisan/:id')
   getArtisanProfileById(@Param('id') id: string) {
     return this.profilesService.getArtisanProfileById(id);

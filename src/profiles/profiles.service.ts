@@ -59,6 +59,14 @@ export class ProfilesService {
     return profile;
   }
 
+  async getMyArtisanProfile(userId: string) {
+    const profile = await this.artisanProfileModel.findOne({ userId: new Types.ObjectId(userId) });
+    if (!profile) {
+      throw new NotFoundException('Artisan profile not found for this user');
+    }
+    return profile;
+  }
+
   async updateMyArtisanProfile(userId: string, dto: UpdateArtisanProfileDto) {
     const profile = await this.artisanProfileModel.findOne({ userId: new Types.ObjectId(userId) });
     if (!profile) {
