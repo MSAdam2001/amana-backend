@@ -80,4 +80,20 @@ export class ProfilesService {
 
     return profile.save();
   }
+
+  async getPendingArtisanProfiles() {
+    return this.artisanProfileModel.find({
+      verificationStatus: { $in: ['unverified', 'pending'] },
+    });
+  }
+
+  async setArtisanVerificationStatus(id: string, status: string) {
+    const profile = await this.artisanProfileModel.findById(id);
+    if (!profile) {
+      throw new NotFoundException('Artisan profile not found');
+    }
+
+    profile.verificationStatus = status;
+    return profile.save();
+  }
 }
