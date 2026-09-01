@@ -88,6 +88,10 @@ export class ProfilesService {
     });
   }
 
+  async getAllArtisanProfiles() {
+    return this.artisanProfileModel.find().sort({ createdAt: -1 });
+  }
+
   async setArtisanVerificationStatus(id: string, status: string) {
     const profile = await this.artisanProfileModel.findById(id);
     if (!profile) {

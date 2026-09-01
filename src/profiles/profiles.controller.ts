@@ -36,6 +36,13 @@ export class ProfilesController {
     return this.profilesService.getPendingArtisanProfiles();
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Get('artisan/all')
+  getAllArtisanProfiles() {
+    return this.profilesService.getAllArtisanProfiles();
+  }
+
   @Get('artisan/:id')
   getArtisanProfileById(@Param('id') id: string) {
     return this.profilesService.getArtisanProfileById(id);
