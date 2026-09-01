@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNumber, Min, Max, IsArray, ArrayMaxSize } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsBoolean, Min, Max, IsArray, ArrayMaxSize } from 'class-validator';
 
 export class UpdateArtisanProfileDto {
   @IsArray()
@@ -18,4 +18,8 @@ export class UpdateArtisanProfileDto {
   @IsString()
   @IsOptional()
   bio?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isAvailable?: boolean;
 }

@@ -77,6 +77,7 @@ export class ProfilesService {
     if (dto.yearsExperience !== undefined) profile.yearsExperience = dto.yearsExperience;
     if (dto.portfolioPhotos !== undefined) profile.portfolioPhotos = dto.portfolioPhotos;
     if (dto.bio !== undefined) profile.bio = dto.bio;
+    if (dto.isAvailable !== undefined) profile.isAvailable = dto.isAvailable;
 
     return profile.save();
   }
