@@ -1,4 +1,3 @@
-
 import { IsString, IsNotEmpty, MinLength, IsIn } from 'class-validator';
 
 export class RegisterDto {

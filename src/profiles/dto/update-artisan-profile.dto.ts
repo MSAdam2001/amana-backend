@@ -1,4 +1,19 @@
-import { IsString, IsOptional, IsNumber, IsBoolean, Min, Max, IsArray, ArrayMaxSize } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsBoolean, Min, Max, IsArray, ArrayMaxSize, ValidateNested, IsObject } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class SocialMediaDto {
+  @IsString()
+  @IsOptional()
+  instagram?: string;
+
+  @IsString()
+  @IsOptional()
+  facebook?: string;
+
+  @IsString()
+  @IsOptional()
+  tiktok?: string;
+}
 
 export class UpdateArtisanProfileDto {
   @IsArray()
@@ -22,4 +37,10 @@ export class UpdateArtisanProfileDto {
   @IsBoolean()
   @IsOptional()
   isAvailable?: boolean;
+
+  @IsObject()
+  @ValidateNested()
+  @Type(() => SocialMediaDto)
+  @IsOptional()
+  socialMedia?: SocialMediaDto;
 }

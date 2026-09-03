@@ -78,6 +78,7 @@ export class ProfilesService {
     if (dto.portfolioPhotos !== undefined) profile.portfolioPhotos = dto.portfolioPhotos;
     if (dto.bio !== undefined) profile.bio = dto.bio;
     if (dto.isAvailable !== undefined) profile.isAvailable = dto.isAvailable;
+    if (dto.socialMedia !== undefined) profile.socialMedia = dto.socialMedia as any;
 
     return profile.save();
   }

@@ -3,6 +3,18 @@ import { Document, Types } from 'mongoose';
 
 export type ArtisanProfileDocument = ArtisanProfile & Document;
 
+@Schema({ _id: false })
+export class SocialMedia {
+  @Prop({ default: '' })
+  instagram: string;
+
+  @Prop({ default: '' })
+  facebook: string;
+
+  @Prop({ default: '' })
+  tiktok: string;
+}
+
 @Schema({ timestamps: true })
 export class ArtisanProfile {
   @Prop({ required: true, type: Types.ObjectId, ref: 'User', unique: true })
@@ -46,6 +58,9 @@ export class ArtisanProfile {
 
   @Prop({ default: 0 })
   ratingCount: number;
+
+  @Prop({ type: SocialMedia, default: () => ({}) })
+  socialMedia: SocialMedia;
 }
 
 export const ArtisanProfileSchema = SchemaFactory.createForClass(ArtisanProfile);

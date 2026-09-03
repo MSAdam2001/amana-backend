@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ForbiddenException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Review, ReviewDocument } from './schemas/review.schema';
 import { Booking, BookingDocument, BookingStatus } from '../bookings/schemas/booking.schema';
 import { ArtisanProfile, ArtisanProfileDocument } from '../profiles/schemas/artisan-profile.schema';
@@ -46,6 +46,13 @@ export class ReviewsService {
     await this.updateArtisanRatingAggregate(booking.artisanProfileId.toString());
 
     return savedReview;
+  }
+
+  async getReviewsForArtisan(artisanProfileId: string) {
+    return this.reviewModel
+      .find({ artisanProfileId: new Types.ObjectId(artisanProfileId) })
+      .sort({ createdAt: -1 })
+      .limit(20);
   }
 
   private async updateArtisanRatingAggregate(artisanProfileId: string) {
