@@ -8,6 +8,9 @@ export class User {
   @Prop({ required: true, unique: true })
   phone: string;
 
+  @Prop({ required: true, unique: true })
+  email: string;
+
   @Prop({ required: true })
   passwordHash: string;
 
@@ -16,6 +19,12 @@ export class User {
 
   @Prop({ default: false })
   isVerified: boolean;
+
+  @Prop()
+  emailVerificationToken?: string;
+
+  @Prop()
+  emailVerificationExpires?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
