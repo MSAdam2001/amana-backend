@@ -32,6 +32,6 @@ export class UploadsController {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
-    return { url: `http://localhost:3000/uploads/${file.filename}` };
+    return { url: `${process.env.BACKEND_URL || 'http://localhost:3001'}/uploads/${file.filename}` };
   }
 }
