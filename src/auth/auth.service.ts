@@ -55,22 +55,34 @@ export class AuthService {
   }
 
   async verifyEmail(token: string) {
-    const user = await this.userModel.findOne({
-      emailVerificationToken: token,
-      emailVerificationExpires: { $gt: new Date() },
-    });
+  const user = await this.userModel.findOne({
+    emailVerificationToken: token,
+    emailVerificationExpires: { $gt: new Date() },
+  });
 
-    if (!user) {
-      throw new UnauthorizedException('Invalid or expired verification link');
-    }
-
-    user.isVerified = true;
-    user.emailVerificationToken = undefined;
-    user.emailVerificationExpires = undefined;
-    await user.save();
-
-    return { message: 'Email verified successfully' };
+  if (!user) {
+    throw new UnauthorizedException('Invalid or expired verification link');
   }
+
+  user.isVerified = true;
+  user.emailVerificationToken = undefined;
+  user.emailVerificationExpires = undefined;
+  await user.save();
+
+  const payload = { sub: user._id, role: user.role };
+  const accessToken = await this.jwtService.signAsync(payload);
+
+  return {
+    message: 'Email verified successfully',
+    accessToken,
+    user: {
+      id: user._id,
+      phone: user.phone,
+      email: user.email,
+      role: user.role,
+    },
+  };
+}
 
   async login(dto: LoginDto) {
     const user = await this.userModel.findOne({ phone: dto.phone });

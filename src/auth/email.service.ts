@@ -1,15 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { Resend } from 'resend';
+import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class EmailService {
-  private resend = new Resend(process.env.RESEND_API_KEY);
+  private transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
 
   async sendVerificationEmail(to: string, token: string) {
     const verifyUrl = `${process.env.FRONTEND_URL_FOR_EMAILS}/verify-email?token=${token}`;
 
-    await this.resend.emails.send({
-      from: 'Amana <onboarding@resend.dev>',
+    await this.transporter.sendMail({
+      from: `"Amana" <${process.env.GMAIL_USER}>`,
       to,
       subject: 'Verify your Amana account',
       html: `
