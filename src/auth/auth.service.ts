@@ -41,11 +41,13 @@ export class AuthService {
       emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
 
-    const savedUser = await newUser.save();
+   const savedUser = await newUser.save();
 
-    await this.emailService.sendVerificationEmail(dto.email, verificationToken);
+this.emailService.sendVerificationEmail(dto.email, verificationToken).catch((err) => {
+  console.error('Failed to send verification email:', err);
+});
 
-    return {
+return {
       id: savedUser._id,
       phone: savedUser.phone,
       email: savedUser.email,
