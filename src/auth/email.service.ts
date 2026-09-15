@@ -1,18 +1,18 @@
 import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
 
-  constructor(private readonly configService: ConfigService) {}
-
   async sendVerificationEmail(to: string, token: string): Promise<void> {
-    const apiKey = this.configService.get<string>('BREVO_API_KEY');
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL_FOR_EMAILS');
-    const fromEmail = this.configService.get<string>('BREVO_FROM_EMAIL');
+    const apiKey = process.env.BREVO_API_KEY;
+    const frontendUrl = process.env.FRONTEND_URL_FOR_EMAILS;
+    const fromEmail = process.env.BREVO_FROM_EMAIL;
 
     if (!apiKey || !frontendUrl || !fromEmail) {
+      this.logger.error(
+        `Missing email config — apiKey: ${!!apiKey}, frontendUrl: ${!!frontendUrl}, fromEmail: ${!!fromEmail}`
+      );
       throw new Error('Missing required email config (BREVO_API_KEY, FRONTEND_URL_FOR_EMAILS, or BREVO_FROM_EMAIL)');
     }
 
