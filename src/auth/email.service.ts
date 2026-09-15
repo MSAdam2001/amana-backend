@@ -1,37 +1,24 @@
 import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as brevo from '@getbrevo/brevo';
 
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
-  private readonly apiInstance: brevo.TransactionalEmailsApi;
 
-  constructor(private readonly configService: ConfigService) {
-    const apiKey = this.configService.get<string>('BREVO_API_KEY');
-    if (!apiKey) {
-      throw new Error('BREVO_API_KEY is not set in environment variables');
-    }
-
-    this.apiInstance = new brevo.TransactionalEmailsApi();
-    this.apiInstance.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, apiKey);
-  }
+  constructor(private readonly configService: ConfigService) {}
 
   async sendVerificationEmail(to: string, token: string): Promise<void> {
+    const apiKey = this.configService.get<string>('BREVO_API_KEY');
     const frontendUrl = this.configService.get<string>('FRONTEND_URL_FOR_EMAILS');
     const fromEmail = this.configService.get<string>('BREVO_FROM_EMAIL');
 
-    if (!frontendUrl || !fromEmail) {
-      throw new Error('Missing required email config (FRONTEND_URL_FOR_EMAILS or BREVO_FROM_EMAIL)');
+    if (!apiKey || !frontendUrl || !fromEmail) {
+      throw new Error('Missing required email config (BREVO_API_KEY, FRONTEND_URL_FOR_EMAILS, or BREVO_FROM_EMAIL)');
     }
 
     const verifyUrl = `${frontendUrl}/verify-email?token=${token}`;
 
-    const email = new brevo.SendSmtpEmail();
-    email.to = [{ email: to }];
-    email.sender = { email: fromEmail, name: 'Amana' };
-    email.subject = 'Verify your Amana account';
-    email.htmlContent = `
+    const htmlContent = `
       <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
         <h2 style="color: #0F4C45;">Welcome to Amana</h2>
         <p>Click the button below to verify your email address and activate your account.</p>
@@ -44,10 +31,29 @@ export class EmailService {
         </p>
       </div>
     `;
-    email.textContent = `Welcome to Amana. Verify your email: ${verifyUrl}`;
 
     try {
-      await this.apiInstance.sendTransacEmail(email);
+      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'api-key': apiKey,
+        },
+        body: JSON.stringify({
+          sender: { email: fromEmail, name: 'Amana' },
+          to: [{ email: to }],
+          subject: 'Verify your Amana account',
+          htmlContent,
+          textContent: `Welcome to Amana. Verify your email: ${verifyUrl}`,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`Brevo API responded with ${response.status}: ${errorBody}`);
+      }
+
       this.logger.log(`Verification email sent to ${to}`);
     } catch (err) {
       this.logger.error(`Failed to send verification email to ${to}`, err instanceof Error ? err.stack : err);
